@@ -1,7 +1,7 @@
 {
   "name": "term-structure-zk",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "lib/helper.ts",
   "license": "MIT",
   "scripts": {
     "postinstall": "patch-package",

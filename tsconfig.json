@@ -13,6 +13,7 @@
     "allowJs": true,
     "checkJs": false,
     "allowUnreachableCode": true,
+    "outDir": "dist",
   },
   "include":[
     "lib/**/*.ts",

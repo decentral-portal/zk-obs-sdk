@@ -1,10 +1,6 @@
 import { BigNumber, ethers } from 'ethers';
-import { recursiveToString, hexToUint8Array } from '../helper';
-import { TsRollupCircuitInputType } from '../ts-types/ts-circuit-types';
-import { TsTokenLeafType } from '../ts-types/ts-merkletree.types';
 import { TsTxAuctionBorrowNonSignatureRequest, TsTxAuctionCancelNonSignatureRequest, TsTxAuctionLendNonSignatureRequest, TsTxDepositNonSignatureRequest, TsTxDepositRequest, TsTxRegisterRequest, TsTxTransferNonSignatureRequest, TsTxTransferRequest } from '../ts-types/ts-req-types';
-import { CHUNK_BYTES_SIZE, MAX_CHUNKS_BYTES_PER_REQ, MAX_CHUNKS_PER_REQ, TsSystemAccountAddress, TsTokenAddress, TsTokenInfo, TsTxType } from '../ts-types/ts-types';
-import { txToCircuitInput } from './ts-helper';
+import { CHUNK_BYTES_SIZE, MAX_CHUNKS_BYTES_PER_REQ, TsSystemAccountAddress, TsTokenAddress, TsTxType } from '../ts-types/ts-types';
 
 // [L2AddrFrom, L2AddrTo, L2TokenAddr, tokenAmt, nonce, arg0, arg1, arg2, arg3, arg4]
 export type TsTxRequestDatasType = [
@@ -17,24 +13,6 @@ export type TsTxAuctionRequestDatasType = [
   bigint, bigint, bigint, bigint, bigint, 
   bigint,
 ]; 
-
-export function exportTransferCircuitInput(txLogs: any[], oriTxNum: bigint, accountRootFlow: bigint[], orderRootFlow: bigint[]): TsRollupCircuitInputType {
-  const inputs = txsToRollupCircuitInput(txLogs) as any;
-
-  // TODO: type check
-  inputs['oriTxNum'] = oriTxNum.toString();
-  inputs['accountRootFlow'] = accountRootFlow.map(x => recursiveToString(x));
-  inputs['orderRootFlow'] = orderRootFlow.map(x => recursiveToString(x));
-  return inputs;
-}
-
-
-export function txsToRollupCircuitInput<T, B>(obj: any[], initData: any = {}): TsRollupCircuitInputType {
-  obj.forEach((item) => {
-    txToCircuitInput(item, initData);
-  });
-  return initData;
-}
 
 
 export function encodeTxDepositMessage(txDepositReq: TsTxDepositNonSignatureRequest): TsTxRequestDatasType {
@@ -143,13 +121,6 @@ export function getEmptyMainTx() {
   return req;
 }
 
-export function encodeTokenLeaf(token: TsTokenInfo): TsTokenLeafType {
-  return [
-    BigInt(token.tokenAddr),
-    BigInt(token.amount),
-    BigInt(token.lockAmt),
-  ];
-}
 
 export function encodeRChunkBuffer(txTransferReq: TsTxTransferRequest) {
   if(!txTransferReq.L2TokenLeafIdFrom) {

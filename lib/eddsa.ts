@@ -1,4 +1,3 @@
-import { bufferToBigInt } from './helper';
 import { EdDSAPublicKeyType, EdDSASignaturePayload } from './ts-types/eddsa-types';
 const circomlibjs = require('circomlibjs');
 const ff = require('ffjavascript');
@@ -8,14 +7,6 @@ export const asyncEdDSA = circomlibjs.buildEddsa();
 (async function() {
   EdDSA = await asyncEdDSA;
 })();
-
-const bigInt2Buffer = (i: bigint): Buffer => {
-  let hexStr = i.toString(16);
-  while (hexStr.length < 64) {
-    hexStr = '0' + hexStr;
-  }
-  return Buffer.from(hexStr, 'hex');
-};
 
 export class EddsaSigner {
   private privateKey: Buffer;

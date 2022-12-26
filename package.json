@@ -16,7 +16,6 @@
   "dependencies": {
     "@big-whale-labs/poseidon": "^0.0.5",
     "@noble/secp256k1": "^1.7.0",
-    "axios": "^0.27",
     "circom_tester": "^0.0.18",
     "eip-712": "^1.0.0",
     "ethers": "^5.7.0",
@@ -25,7 +24,6 @@
     "ts-command-line-args": "^2.3.1"
   },
   "devDependencies": {
-    "@cucumber/cucumber": "^8.6.0",
     "@guildofweavers/merkle": "^0.3.12",
     "@types/chai": "^4.3.3",
     "@types/lodash": "^4.14.184",

@@ -6,6 +6,7 @@ const poseidon_hash_dp_1 = require("../poseidon-hash-dp");
 const ts_types_1 = require("../ts-types/ts-types");
 const ts_tx_helper_1 = require("./ts-tx-helper");
 const bigint_helper_1 = require("../bigint-helper");
+const ts_helper_1 = require("./ts-helper");
 class TsRollupSigner {
     get tsPubKey() {
         const pub = this.signer.publicKey.map(x => BigInt(eddsa_1.EddsaSigner.toObject(x).toString()));
@@ -15,6 +16,11 @@ class TsRollupSigner {
     }
     constructor(priv) {
         this.signer = new eddsa_1.EddsaSigner(priv);
+    }
+    get tsAddr() {
+        const raw = BigInt((0, ts_helper_1.tsHashFunc)(this.tsPubKey.map(v => v.toString())));
+        const hash = raw % BigInt(2 ** 160);
+        return `0x${hash.toString(16).padStart(40, '0')}`;
     }
     signPoseidonMessageHash(msgHash) {
         return this.signer.signPoseidon(msgHash);
@@ -58,10 +64,6 @@ class TsRollupSigner {
             nonce: nonce.toString(),
             txAmount: (0, bigint_helper_1.amountToTxAmountV2)(amount).toString(),
         };
-        console.log({
-            amount,
-            txAmount: req.txAmount,
-        });
         const msgHash = (0, poseidon_hash_dp_1.dpPoseidonHash)((0, ts_tx_helper_1.encodeTxTransferMessage)(req));
         const eddsaSig = this.signPoseidonMessageHash(msgHash);
         return {
@@ -100,7 +102,8 @@ class TsRollupSigner {
     prepareTxAuctionPlaceLend(data) {
         const req = {
             ...data,
-            L2AddrTo: ts_types_1.TsSystemAccountAddress.AUCTION_ADDR
+            L2AddrTo: ts_types_1.TsSystemAccountAddress.AUCTION_ADDR,
+            // txAmount: amountToTxAmountV2(BigInt(data.lendingAmt)).toString(),
         };
         const msgHash = (0, poseidon_hash_dp_1.dpPoseidonHash)((0, ts_tx_helper_1.encodeTxAuctionLendMessage)(req));
         const eddsaSig = this.signPoseidonMessageHash(msgHash);
@@ -136,7 +139,6 @@ class TsRollupSigner {
     prepareTxAuctionCancel(data) {
         const req = {
             ...data,
-            L2AddrFrom: ts_types_1.TsSystemAccountAddress.AUCTION_ADDR
         };
         const msgHash = (0, poseidon_hash_dp_1.dpPoseidonHash)((0, ts_tx_helper_1.encodeTxAuctionCancelMessage)(req));
         const eddsaSig = this.signPoseidonMessageHash(msgHash);

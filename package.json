@@ -1,7 +1,7 @@
 {
     "name": "zk-obs-sdk",
-    "version": "0.0.11",
-    "main": "dist/lib/index.ts",
+    "version": "0.0.13",
+    "main": "dist/lib/index.js",
     "license": "MIT",
     "scripts": {
         "publish": "npm run compile && npx auto-version",

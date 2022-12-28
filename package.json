@@ -1,44 +1,46 @@
 {
-  "name": "zk-obs-sdk",
-  "version": "0.0.4",
-  "main": "dist/lib/helper.ts",
-  "license": "MIT",
-  "scripts": {
-    "compile": "tsc",
-    "postinstall": "npx patch-package",
-    "start:gen": "ts-node scripts/genSignupData.runner.ts",
-    "start:sign": "ts-node scripts/sigExample.runner.ts",
-    "eslint": "eslint --ext .ts,.tsx ./ --fix",
-    "test:sign": "NODE_OPTIONS=--max_old_space_size=1024000 mocha -r ts-node/register 'test/lib-test/sign.test.ts'",
-    "test": "hardhat test",
-    "t": "ts-node test.ts"
-  },
-  "dependencies": {
-    "@big-whale-labs/poseidon": "^0.0.5",
-    "@noble/secp256k1": "^1.7.0",
-    "circom_tester": "^0.0.18",
-    "eip-712": "^1.0.0",
-    "ethers": "^5.7.0",
-    "ffjavascript": "^0.2.56",
-    "ts-command-line-args": "^2.3.1"
-  },
-  "devDependencies": {
-    "@guildofweavers/merkle": "^0.3.12",
-    "@types/chai": "^4.3.3",
-    "@types/mocha": "^9.1.1",
-    "@types/node": "^18.7.14",
-    "@typescript-eslint/eslint-plugin": "^5.36.1",
-    "@typescript-eslint/parser": "^5.36.1",
-    "blake-hash": "^2.0.0",
-    "chai": "^4.3.6",
-    "circomlibjs": "^0.1.2",
-    "eslint": "^8.23.0",
-    "mocha": "^10.0.0",
-    "patch-package": "^6.5.0",
-    "ts-node": "^10.9.1",
-    "typescript": "^4.8.2"
-  },
-  "engines": {
-    "node": ">=16"
-  }
+    "name": "zk-obs-sdk",
+    "version": "0.0.5",
+    "main": "dist/lib/helper.ts",
+    "license": "MIT",
+    "scripts": {
+        "publish": "npm run compile && npx auto-version && npm publish",
+        "compile": "tsc",
+        "postinstall": "npx patch-package",
+        "start:gen": "ts-node scripts/genSignupData.runner.ts",
+        "start:sign": "ts-node scripts/sigExample.runner.ts",
+        "eslint": "eslint --ext .ts,.tsx ./ --fix",
+        "test:sign": "NODE_OPTIONS=--max_old_space_size=1024000 mocha -r ts-node/register 'test/lib-test/sign.test.ts'",
+        "test": "hardhat test",
+        "t": "ts-node test.ts"
+    },
+    "dependencies": {
+        "@big-whale-labs/poseidon": "^0.0.5",
+        "@noble/secp256k1": "^1.7.0",
+        "circom_tester": "^0.0.18",
+        "eip-712": "^1.0.0",
+        "ethers": "^5.7.0",
+        "ffjavascript": "^0.2.56",
+        "ts-command-line-args": "^2.3.1"
+    },
+    "devDependencies": {
+        "@guildofweavers/merkle": "^0.3.12",
+        "@types/chai": "^4.3.3",
+        "@types/mocha": "^9.1.1",
+        "@types/node": "^18.7.14",
+        "@typescript-eslint/eslint-plugin": "^5.36.1",
+        "@typescript-eslint/parser": "^5.36.1",
+        "auto-version-js": "^0.3.10",
+        "blake-hash": "^2.0.0",
+        "chai": "^4.3.6",
+        "circomlibjs": "^0.1.2",
+        "eslint": "^8.23.0",
+        "mocha": "^10.0.0",
+        "patch-package": "^6.5.0",
+        "ts-node": "^10.9.1",
+        "typescript": "^4.8.2"
+    },
+    "engines": {
+        "node": ">=16"
+    }
 }

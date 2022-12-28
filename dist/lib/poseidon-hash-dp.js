@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.dpPoseidonHash = void 0;
 const poseidon_1 = require("@big-whale-labs/poseidon");
 class dpPoseidonCache {
+    static cache = new Map();
     static getCache(x) {
         if (x instanceof Array) {
             const key = x.join();
@@ -23,7 +24,6 @@ class dpPoseidonCache {
             .set(x, v);
     }
 }
-dpPoseidonCache.cache = new Map();
 function dpPoseidonHash(inputs, isDpEnabled = true) {
     if (isDpEnabled) {
         const cache = dpPoseidonCache.getCache(inputs);

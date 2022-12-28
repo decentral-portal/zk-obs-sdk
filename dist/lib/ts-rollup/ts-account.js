@@ -8,6 +8,7 @@ const ts_tx_helper_1 = require("./ts-tx-helper");
 const bigint_helper_1 = require("../bigint-helper");
 const ts_helper_1 = require("./ts-helper");
 class TsRollupSigner {
+    signer;
     get tsPubKey() {
         const pub = this.signer.publicKey.map(x => BigInt(eddsa_1.EddsaSigner.toObject(x).toString()));
         return [

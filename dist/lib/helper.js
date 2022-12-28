@@ -175,27 +175,6 @@ const tsPubKeyTypeConverter = (tsPubKey) => {
     return [eddsa_1.EddsaSigner.toE(tsPubKey[0]), eddsa_1.EddsaSigner.toE(tsPubKey[1])];
 };
 exports.tsPubKeyTypeConverter = tsPubKeyTypeConverter;
-exports.default = {
-    hexToDec: exports.hexToDec,
-    genEthereumPrivateKey,
-    privateKeyToAddress: exports.privateKeyToAddress,
-    uint8ArrayToHexString,
-    stringToUint8Array,
-    bigint_to_Uint8Array,
-    Uint8Array_to_bigint,
-    privKeyStringToBigInt,
-    bufferToDec,
-    bufferIsEmpty,
-    hexToUint8Array,
-    bigint_to_tuple,
-    bigint_to_hex,
-    objectToHexString,
-    uint8ArrayToBuffer,
-    hexToBuffer,
-    uint8ArrayToBigint,
-    recursiveToString,
-    eddsaSigTypeConverter: exports.eddsaSigTypeConverter,
-};
 function bufferToBigInt(buffer) {
     return BigInt('0x' + buffer.toString('hex'));
 }

@@ -183,28 +183,6 @@ export const tsPubKeyTypeConverter = (tsPubKey: [bigint, bigint]): EdDSAPublicKe
   return [EddsaSigner.toE(tsPubKey[0]), EddsaSigner.toE(tsPubKey[1])];
 };
 
-export default {
-  hexToDec,
-  genEthereumPrivateKey,
-  privateKeyToAddress,
-  uint8ArrayToHexString,
-  stringToUint8Array,
-  bigint_to_Uint8Array,
-  Uint8Array_to_bigint,
-  privKeyStringToBigInt,
-  bufferToDec,
-  bufferIsEmpty,
-  hexToUint8Array,
-  bigint_to_tuple,
-  bigint_to_hex,
-  objectToHexString,
-  uint8ArrayToBuffer,
-  hexToBuffer,
-  uint8ArrayToBigint,
-  recursiveToString,
-  eddsaSigTypeConverter,
-};
-
 export function bufferToBigInt(buffer: Buffer) {
   return BigInt('0x' + buffer.toString('hex'));
 }

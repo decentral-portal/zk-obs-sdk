@@ -8,6 +8,8 @@ exports.asyncEdDSA = circomlibjs.buildEddsa();
     exports.EdDSA = await exports.asyncEdDSA;
 })();
 class EddsaSigner {
+    privateKey;
+    publicKey;
     constructor(privateKey) {
         this.privateKey = privateKey;
         this.publicKey = (privateKey.length === 0) ? [

@@ -5,6 +5,7 @@ import { TsTxWithdrawRequest, TsTxWithdrawNonSignatureRequest, TsTxTransferReque
 import { TsTokenAddress, TsSystemAccountAddress, TsTxType } from '../ts-types/ts-types';
 import { encodeTxDepositMessage, encodeTxTransferMessage, encodeTxAuctionLendMessage, encodeTxAuctionBorrowMessage, encodeTxWithdrawMessage, encodeTxAuctionCancelMessage } from './ts-tx-helper';
 import { amountToTxAmountV2 } from '../bigint-helper';
+import { tsHashFunc } from './ts-helper';
 
 export class TsRollupSigner {
   private signer: EddsaSigner;
@@ -17,6 +18,12 @@ export class TsRollupSigner {
 
   constructor(priv: Buffer, ) {
     this.signer = new EddsaSigner(priv);
+  }
+
+  public get tsAddr() {
+    const raw = BigInt(tsHashFunc(this.tsPubKey.map(v => v.toString())));
+    const hash = raw % BigInt(2 ** 160);
+    return `0x${hash.toString(16).padStart(40, '0')}`;
   }
 
   signPoseidonMessageHash(msgHash: bigint) {
@@ -64,10 +71,6 @@ export class TsRollupSigner {
       nonce: nonce.toString(),
       txAmount: amountToTxAmountV2(amount).toString(),
     };
-    console.log({
-      amount,
-      txAmount: req.txAmount,
-    });
     const msgHash = dpPoseidonHash(encodeTxTransferMessage(req));
     const eddsaSig = this.signPoseidonMessageHash(msgHash);
 
@@ -110,7 +113,8 @@ export class TsRollupSigner {
   prepareTxAuctionPlaceLend(data: Exclude<TsTxAuctionLendNonSignatureRequest, 'L2AddrTo'>): TsTxAuctionLendRequest {
     const req: TsTxAuctionLendNonSignatureRequest = {
       ...data,
-      L2AddrTo: TsSystemAccountAddress.AUCTION_ADDR
+      L2AddrTo: TsSystemAccountAddress.AUCTION_ADDR,
+      // txAmount: amountToTxAmountV2(BigInt(data.lendingAmt)).toString(),
     };
     const msgHash = dpPoseidonHash(encodeTxAuctionLendMessage(req));
     const eddsaSig = this.signPoseidonMessageHash(msgHash);
@@ -150,7 +154,6 @@ export class TsRollupSigner {
   prepareTxAuctionCancel(data: Exclude<TsTxAuctionCancelNonSignatureRequest,  'L2AddrFrom'>): TsTxAuctionCancelRequest {
     const req: TsTxAuctionCancelNonSignatureRequest = {
       ...data,
-      L2AddrFrom: TsSystemAccountAddress.AUCTION_ADDR
     };
     const msgHash = dpPoseidonHash(encodeTxAuctionCancelMessage(req));
     const eddsaSig = this.signPoseidonMessageHash(msgHash);

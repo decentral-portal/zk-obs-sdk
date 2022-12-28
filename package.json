@@ -1,11 +1,11 @@
 {
   "name": "zk-obs-sdk",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "main": "dist/lib/helper.ts",
   "license": "MIT",
   "scripts": {
     "compile": "tsc",
-    "postinstall": "patch-package",
+    "postinstall": "npx patch-package",
     "start:gen": "ts-node scripts/genSignupData.runner.ts",
     "start:sign": "ts-node scripts/sigExample.runner.ts",
     "eslint": "eslint --ext .ts,.tsx ./ --fix",

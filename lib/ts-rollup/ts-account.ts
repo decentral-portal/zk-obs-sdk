@@ -107,7 +107,7 @@ export class TsRollupSigner {
     };
   }
 
-  prepareMarketOrder(sender: bigint, sellTokenId: TsTokenAddress, sellAmt: bigint, nonce: bigint, buyTokenId: TsTokenAddress, buyAmt: bigint): TsTxMarketOrderRequest {
+  prepareTxMarketOrder(sender: bigint, sellTokenId: TsTokenAddress, sellAmt: bigint, nonce: bigint, buyTokenId: TsTokenAddress, buyAmt: bigint): TsTxMarketOrderRequest {
     const req: TsTxMarketOrderNonSignatureRequest = {
       reqType: TsTxType.MARKET_ORDER,
       sender: sender.toString(),

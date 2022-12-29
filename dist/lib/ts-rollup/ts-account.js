@@ -97,7 +97,7 @@ class TsRollupSigner {
             },
         };
     }
-    prepareMarketOrder(sender, sellTokenId, sellAmt, nonce, buyTokenId, buyAmt) {
+    prepareTxMarketOrder(sender, sellTokenId, sellAmt, nonce, buyTokenId, buyAmt) {
         const req = {
             reqType: ts_types_1.TsTxType.MARKET_ORDER,
             sender: sender.toString(),

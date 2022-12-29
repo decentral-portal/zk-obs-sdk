@@ -12,5 +12,5 @@ export declare class TsRollupSigner {
     prepareTxDeposit(tokenId: TsTokenAddress, amount: bigint, sender: bigint): TsTxDepositRequest;
     prepareTxWithdraw(sender: bigint, tokenId: TsTokenAddress, amount: bigint, nonce: bigint): TsTxWithdrawRequest;
     prepareTxLimitOrder(sender: bigint, sellTokenId: TsTokenAddress, sellAmt: bigint, nonce: bigint, buyTokenId: TsTokenAddress, buyAmt: bigint): TsTxLimitOrderRequest;
-    prepareMarketOrder(sender: bigint, sellTokenId: TsTokenAddress, sellAmt: bigint, nonce: bigint, buyTokenId: TsTokenAddress, buyAmt: bigint): TsTxMarketOrderRequest;
+    prepareTxMarketOrder(sender: bigint, sellTokenId: TsTokenAddress, sellAmt: bigint, nonce: bigint, buyTokenId: TsTokenAddress, buyAmt: bigint): TsTxMarketOrderRequest;
 }

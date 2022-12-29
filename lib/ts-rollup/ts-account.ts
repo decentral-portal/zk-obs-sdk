@@ -38,13 +38,13 @@ export class TsRollupSigner {
     return EddsaSigner.verify(EddsaSigner.toE(msgHash), signature, tsPubKey);
   }
   
-  prepareTxDeposit(tokenId: TsTokenAddress, amount: bigint, sender: bigint): TsTxDepositRequest {
+  prepareTxDeposit(tokenId: TsTokenAddress, amount: string, sender: string): TsTxDepositRequest {
     const req: TsTxDepositNonSignatureRequest = {
       reqType: TsTxType.DEPOSIT,
       tokenId: tokenId,
-      stateAmt: amount.toString(),
+      stateAmt: amount,
       nonce: '0',
-      sender: sender.toString(),
+      sender: sender,
     };
     const msgHash = dpPoseidonHash(encodeTxDepositMessage(req));
     const eddsaSig = this.signPoseidonMessageHash(msgHash);
@@ -61,13 +61,13 @@ export class TsRollupSigner {
     };
   }
 
-  prepareTxWithdraw(sender: bigint, tokenId: TsTokenAddress, amount: bigint, nonce: bigint): TsTxWithdrawRequest {
+  prepareTxWithdraw(sender: string, tokenId: TsTokenAddress, amount: string, nonce: string): TsTxWithdrawRequest {
     const req: TsTxWithdrawNonSignatureRequest = {
       reqType: TsTxType.WITHDRAW,
-      sender: sender.toString(),
+      sender: sender,
       tokenId: tokenId,
-      stateAmt: amount.toString(),
-      nonce: nonce.toString(),
+      stateAmt: amount,
+      nonce: nonce,
     };
     const msgHash = dpPoseidonHash(encodeTxWithdrawMessage(req));
     const eddsaSig = this.signPoseidonMessageHash(msgHash);
@@ -83,15 +83,15 @@ export class TsRollupSigner {
     };
   }
 
-  prepareTxLimitOrder(sender: bigint, sellTokenId: TsTokenAddress, sellAmt: bigint, nonce: bigint, buyTokenId: TsTokenAddress, buyAmt: bigint): TsTxLimitOrderRequest {
+  prepareTxLimitOrder(sender: string, sellTokenId: TsTokenAddress, sellAmt: string, nonce: string, buyTokenId: TsTokenAddress, buyAmt: string): TsTxLimitOrderRequest {
     const req: TsTxLimitOrderNonSignatureRequest = {
       reqType: TsTxType.LIMIT_ORDER,
-      sender: sender.toString(),
+      sender: sender,
       sellTokenId: sellTokenId,
-      sellAmt: sellAmt.toString(),
-      nonce: nonce.toString(),
+      sellAmt: sellAmt,
+      nonce: nonce,
       buyTokenId: buyTokenId,
-      buyAmt: buyAmt.toString(),
+      buyAmt: buyAmt,
     };
     const msgHash = dpPoseidonHash(encodeTxLimitOrderMessage(req));
     const eddsaSig = this.signPoseidonMessageHash(msgHash);
@@ -106,13 +106,13 @@ export class TsRollupSigner {
       },
     };
   }
-  prepareTxMarketOrder(sender: bigint, sellTokenId: TsTokenAddress, sellAmt: bigint, nonce: bigint, buyTokenId: TsTokenAddress, buyAmt: bigint): TsTxMarketOrderRequest {
+  prepareTxMarketOrder(sender: string, sellTokenId: TsTokenAddress, sellAmt: string, nonce: string, buyTokenId: TsTokenAddress): TsTxMarketOrderRequest {
     const req: TsTxMarketOrderNonSignatureRequest = {
       reqType: TsTxType.MARKET_ORDER,
-      sender: sender.toString(),
+      sender: sender,
       sellTokenId: sellTokenId,
-      sellAmt: sellAmt.toString(),
-      nonce: nonce.toString(),
+      sellAmt: sellAmt,
+      nonce: nonce,
       buyTokenId: buyTokenId,
     };
     const msgHash = dpPoseidonHash(encodeTxMarketOrderMessage(req));

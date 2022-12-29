@@ -33,7 +33,7 @@ export const TsDeciaml = {
 };
 
 export enum TsTokenAddress {
-    Unknown = '0',
+    UNKNOWN = '0',
     WETH = '1',
     USD = '2',
   }

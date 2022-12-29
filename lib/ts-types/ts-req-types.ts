@@ -81,7 +81,6 @@ export interface TsTxMarketOrderNonSignatureRequest extends ITxRequest {
   sellAmt: string;
   nonce: string;
   buyTokenId: TsTokenAddress;
-  buyAmt: string;
 }
 export interface TsTxMarketOrderRequest extends TsTxMarketOrderNonSignatureRequest, TsTxSignaturePayload { }
 

@@ -95,8 +95,7 @@ export function encodeTxMarketOrderMessage(txMarketOrderReq: TsTxMarketOrderRequ
     BigInt(txMarketOrderReq.nonce),
     0n, 0n, 
     BigInt(txMarketOrderReq.buyTokenId),
-    BigInt(txMarketOrderReq.buyAmt),
-    0n, 0n, 0n, 0n
+    0n, 0n, 0n, 0n, 0n
   ]
 }
 

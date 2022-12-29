@@ -1,247 +1,116 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.bigint_to_chunk_array = exports.toBigIntChunkArray = exports.padAndToBuffer = exports.toHexString = exports.encodeRChunkBuffer = exports.getEmptyMainTx = exports.getEmptyRegisterTx = exports.encodeTxAuctionCancelMessage = exports.encodeTxAuctionBorrowMessage = exports.encodeTxAuctionLendMessage = exports.encodeTxWithdrawMessage = exports.encodeTxTransferMessage = exports.encodeTxDepositMessage = void 0;
-const ethers_1 = require("ethers");
+exports.bigint_to_chunk_array = exports.toBigIntChunkArray = exports.padAndToBuffer = exports.toHexString = exports.encodeTxMarketEndMessage = exports.encodeTxMarketExchangeMessage = exports.encodeTxMarketOrderMessage = exports.encodeTxLimitEndMessage = exports.encodeTxLimitExchangeMessage = exports.encodeTxLimitStartMessage = exports.encodeTxLimitOrderMessage = exports.encodeTxWithdrawMessage = exports.encodeTxDepositMessage = exports.encodeTxRegisterMessage = void 0;
 const ts_types_1 = require("../ts-types/ts-types");
+function encodeTxRegisterMessage(txRegisterReq) {
+    return [
+        BigInt(ts_types_1.TsTxType.REGISTER),
+        0n,
+        BigInt(txRegisterReq.tokenId),
+        BigInt(txRegisterReq.stateAmt),
+        BigInt(txRegisterReq.nonce),
+        BigInt(txRegisterReq.sender),
+        BigInt(txRegisterReq.tsAddr),
+        0n, 0n, 0n, 0n, 0n, 0n,
+    ];
+}
+exports.encodeTxRegisterMessage = encodeTxRegisterMessage;
 function encodeTxDepositMessage(txDepositReq) {
     return [
         BigInt(ts_types_1.TsTxType.DEPOSIT),
-        BigInt(txDepositReq.L2AddrTo),
-        BigInt(txDepositReq.L2TokenAddr),
-        BigInt(txDepositReq.amount),
         0n,
-        0n, 0n, 0n, 0n, 0n,
+        BigInt(txDepositReq.tokenId),
+        BigInt(txDepositReq.stateAmt),
+        BigInt(txDepositReq.nonce),
+        BigInt(txDepositReq.sender),
+        0n, 0n, 0n, 0n, 0n, 0n, 0n
     ];
 }
 exports.encodeTxDepositMessage = encodeTxDepositMessage;
-function encodeTxTransferMessage(txTransferReq) {
-    return [
-        BigInt(ts_types_1.TsTxType.TRANSFER),
-        BigInt(txTransferReq.L2AddrFrom),
-        BigInt(txTransferReq.L2TokenAddr),
-        BigInt(txTransferReq.txAmount || 0),
-        BigInt(txTransferReq.nonce),
-        BigInt(txTransferReq.L2AddrTo),
-        0n, 0n, 0n, 0n,
-    ];
-}
-exports.encodeTxTransferMessage = encodeTxTransferMessage;
-function encodeTxWithdrawMessage(txTransferReq) {
+function encodeTxWithdrawMessage(txWithdrawReq) {
     return [
         BigInt(ts_types_1.TsTxType.WITHDRAW),
-        BigInt(txTransferReq.L2AddrFrom),
-        BigInt(txTransferReq.L2TokenAddr),
-        BigInt(txTransferReq.amount),
-        BigInt(txTransferReq.nonce),
-        0n, 0n, 0n, 0n, 0n,
+        BigInt(txWithdrawReq.sender),
+        BigInt(txWithdrawReq.tokenId),
+        BigInt(txWithdrawReq.stateAmt),
+        BigInt(txWithdrawReq.nonce),
+        0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n
     ];
 }
 exports.encodeTxWithdrawMessage = encodeTxWithdrawMessage;
-function encodeTxAuctionLendMessage(txAuctionLendReq) {
+function encodeTxLimitOrderMessage(txLimitOrderReq) {
     return [
-        BigInt(ts_types_1.TsTxType.AUCTION_LEND),
-        BigInt(txAuctionLendReq.L2AddrFrom),
-        BigInt(txAuctionLendReq.L2TokenAddrLending),
-        BigInt(txAuctionLendReq.lendingAmt),
-        BigInt(txAuctionLendReq.nonce),
-        BigInt(txAuctionLendReq.maturityDate),
-        BigInt(txAuctionLendReq.expiredTime),
-        BigInt(txAuctionLendReq.interest),
+        BigInt(ts_types_1.TsTxType.LIMIT_ORDER),
+        BigInt(txLimitOrderReq.sender),
+        BigInt(txLimitOrderReq.sellTokenId),
+        BigInt(txLimitOrderReq.sellAmt),
+        BigInt(txLimitOrderReq.nonce),
         0n, 0n,
-        // txId,
+        BigInt(txLimitOrderReq.buyTokenId),
+        BigInt(txLimitOrderReq.buyAmt),
+        0n, 0n, 0n, 0n
     ];
 }
-exports.encodeTxAuctionLendMessage = encodeTxAuctionLendMessage;
-function encodeTxAuctionBorrowMessage(txAuctionBorrowReq) {
+exports.encodeTxLimitOrderMessage = encodeTxLimitOrderMessage;
+function encodeTxLimitStartMessage(txLimitStartReq) {
     return [
-        BigInt(ts_types_1.TsTxType.AUCTION_BORROW),
-        BigInt(txAuctionBorrowReq.L2AddrFrom),
-        BigInt(txAuctionBorrowReq.L2TokenAddrCollateral),
-        BigInt(txAuctionBorrowReq.collateralAmt),
-        BigInt(txAuctionBorrowReq.nonce),
-        BigInt(txAuctionBorrowReq.maturityDate),
-        BigInt(txAuctionBorrowReq.expiredTime),
-        BigInt(txAuctionBorrowReq.interest),
-        BigInt(txAuctionBorrowReq.L2TokenAddrBorrowing),
-        BigInt(txAuctionBorrowReq.borrowingAmt),
-        // txId,
+        BigInt(ts_types_1.TsTxType.LIMIT_START),
+        0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n,
+        BigInt(txLimitStartReq.orderLeafId),
+        0n, 0n, 0n
     ];
 }
-exports.encodeTxAuctionBorrowMessage = encodeTxAuctionBorrowMessage;
-function encodeTxAuctionCancelMessage(txAuctionCancelReq) {
+exports.encodeTxLimitStartMessage = encodeTxLimitStartMessage;
+function encodeTxLimitExchangeMessage(txLimitExchangeReq) {
     return [
-        BigInt(ts_types_1.TsTxType.AUCTION_CANCEL),
-        BigInt(txAuctionCancelReq.L2AddrTo),
-        BigInt(txAuctionCancelReq.L2TokenAddrRefunded),
-        BigInt(txAuctionCancelReq.amount),
-        BigInt(txAuctionCancelReq.nonce),
-        BigInt(txAuctionCancelReq.orderLeafId),
-        0n, 0n, 0n, 0n,
-        // txId,
+        BigInt(ts_types_1.TsTxType.LIMIT_EXCHANGE),
+        0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n,
+        BigInt(txLimitExchangeReq.orderLeafId),
+        0n, 0n, 0n
     ];
 }
-exports.encodeTxAuctionCancelMessage = encodeTxAuctionCancelMessage;
-function getEmptyRegisterTx() {
-    const req = {
-        L1Addr: '0x00',
-        reqType: ts_types_1.TsTxType.REGISTER,
-        L2AddrFrom: ts_types_1.TsSystemAccountAddress.BURN_ADDR,
-        L2TokenAddr: ts_types_1.TsTokenAddress.Unknown,
-        tsPubKey: ['0', '0'],
-        amount: '0',
-    };
-    return req;
+exports.encodeTxLimitExchangeMessage = encodeTxLimitExchangeMessage;
+function encodeTxLimitEndMessage(txLimitEndReq) {
+    return [
+        BigInt(ts_types_1.TsTxType.LIMIT_END),
+        0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n,
+        BigInt(txLimitEndReq.orderLeafId),
+        0n, 0n, 0n
+    ];
 }
-exports.getEmptyRegisterTx = getEmptyRegisterTx;
-function getEmptyMainTx() {
-    const req = {
-        reqType: ts_types_1.TsTxType.DEPOSIT,
-        L2AddrFrom: ts_types_1.TsSystemAccountAddress.MINT_ADDR,
-        L2AddrTo: ts_types_1.TsSystemAccountAddress.WITHDRAW_ADDR,
-        L2TokenAddr: ts_types_1.TsTokenAddress.Unknown,
-        amount: '0',
-        nonce: '0',
-        eddsaSig: {
-            R8: ['0', '0'],
-            S: '0'
-        }
-    };
-    return req;
+exports.encodeTxLimitEndMessage = encodeTxLimitEndMessage;
+function encodeTxMarketOrderMessage(txMarketOrderReq) {
+    return [
+        BigInt(ts_types_1.TsTxType.MARKET_ORDER),
+        BigInt(txMarketOrderReq.sender),
+        BigInt(txMarketOrderReq.sellTokenId),
+        BigInt(txMarketOrderReq.sellAmt),
+        BigInt(txMarketOrderReq.nonce),
+        0n, 0n,
+        BigInt(txMarketOrderReq.buyTokenId),
+        BigInt(txMarketOrderReq.buyAmt),
+        0n, 0n, 0n, 0n
+    ];
 }
-exports.getEmptyMainTx = getEmptyMainTx;
-function encodeRChunkBuffer(txTransferReq) {
-    if (!txTransferReq.L2TokenLeafIdFrom) {
-        throw new Error('L2TokenLeafIdFrom is required');
-    }
-    switch (txTransferReq.reqType) {
-        case ts_types_1.TsTxType.REGISTER:
-            if (!txTransferReq.hashedTsPubKey) {
-                throw new Error('hashedTsPubKey is required');
-            }
-            const out_r = ethers_1.ethers.utils.solidityPack(['uint8', 'uint32', 'uint16', 'uint16', 'uint128', 'uint160',], [
-                ethers_1.BigNumber.from(txTransferReq.reqType),
-                ethers_1.BigNumber.from(txTransferReq.L2AddrTo),
-                ethers_1.BigNumber.from(txTransferReq.L2TokenAddr),
-                ethers_1.BigNumber.from(txTransferReq.L2TokenLeafIdFrom),
-                ethers_1.BigNumber.from(txTransferReq.amount),
-                ethers_1.BigNumber.from(txTransferReq.hashedTsPubKey),
-            ]).replaceAll('0x', '');
-            return {
-                r_chunks: Buffer.concat([Buffer.from(out_r, 'hex')], ts_types_1.MAX_CHUNKS_BYTES_PER_REQ),
-                o_chunks: out_r,
-                isCritical: true,
-            };
-        case ts_types_1.TsTxType.DEPOSIT:
-            const out_d = ethers_1.ethers.utils.solidityPack(['uint8', 'uint32', 'uint16', 'uint16', 'uint128',], [
-                ethers_1.BigNumber.from(txTransferReq.reqType),
-                ethers_1.BigNumber.from(txTransferReq.L2AddrTo),
-                ethers_1.BigNumber.from(txTransferReq.L2TokenAddr),
-                ethers_1.BigNumber.from(txTransferReq.L2TokenLeafIdFrom),
-                ethers_1.BigNumber.from(txTransferReq.amount),
-            ]).replaceAll('0x', '');
-            return {
-                r_chunks: Buffer.concat([Buffer.from(out_d, 'hex')], ts_types_1.MAX_CHUNKS_BYTES_PER_REQ),
-                o_chunks: Buffer.from(out_d, 'hex'),
-                isCritical: true,
-            };
-        case ts_types_1.TsTxType.WITHDRAW:
-            const out_w = ethers_1.ethers.utils.solidityPack(['uint8', 'uint32', 'uint16', 'uint16', 'uint48', 'uint32', 'uint16',], [
-                ethers_1.BigNumber.from(txTransferReq.reqType),
-                ethers_1.BigNumber.from(txTransferReq.L2AddrFrom),
-                ethers_1.BigNumber.from(txTransferReq.L2TokenAddr),
-                ethers_1.BigNumber.from(txTransferReq.L2TokenLeafIdFrom),
-                ethers_1.BigNumber.from(txTransferReq.amount),
-                ethers_1.BigNumber.from(txTransferReq.L2AddrTo),
-                ethers_1.BigNumber.from(txTransferReq.L2TokenLeafIdTo),
-            ]).replaceAll('0x', '');
-            return {
-                r_chunks: Buffer.concat([Buffer.from(out_w, 'hex')], ts_types_1.MAX_CHUNKS_BYTES_PER_REQ),
-                o_chunks: Buffer.from(out_w, 'hex'),
-                isCritical: true,
-            };
-        case ts_types_1.TsTxType.FORCE_WITHDRAW:
-            const out_fw = Buffer.concat([
-                padAndToBuffer(txTransferReq.reqType, 1),
-                padAndToBuffer(txTransferReq.L2AddrFrom, 4),
-                padAndToBuffer(txTransferReq.L2TokenAddr, 2),
-                padAndToBuffer(txTransferReq.L2TokenLeafIdFrom, 2), padAndToBuffer(txTransferReq.amount, 16),
-            ], ts_types_1.CHUNK_BYTES_SIZE * 5);
-            return {
-                r_chunks: Buffer.concat([out_fw], ts_types_1.MAX_CHUNKS_BYTES_PER_REQ),
-                o_chunks: out_fw,
-                isCritical: true,
-            };
-        case ts_types_1.TsTxType.TRANSFER:
-            if (!txTransferReq.L2TokenLeafIdTo) {
-                throw new Error('L2TokenLeafIdTo is required');
-            }
-            console.log({
-                txTransferReq
-            });
-            console.log({
-                raw: [
-                    ethers_1.BigNumber.from(txTransferReq.reqType),
-                    ethers_1.BigNumber.from(txTransferReq.L2AddrFrom),
-                    ethers_1.BigNumber.from(txTransferReq.L2TokenAddr),
-                    ethers_1.BigNumber.from(txTransferReq.L2TokenLeafIdFrom),
-                    ethers_1.BigNumber.from(txTransferReq.txAmount),
-                    ethers_1.BigNumber.from(txTransferReq.L2AddrTo),
-                    ethers_1.BigNumber.from(txTransferReq.L2TokenLeafIdTo),
-                ]
-            });
-            const out_t = ethers_1.ethers.utils.solidityPack(['uint8', 'uint32', 'uint16', 'uint16', 'uint48', 'uint32', 'uint16',], [
-                ethers_1.BigNumber.from(txTransferReq.reqType),
-                ethers_1.BigNumber.from(txTransferReq.L2AddrFrom),
-                ethers_1.BigNumber.from(txTransferReq.L2TokenAddr),
-                ethers_1.BigNumber.from(txTransferReq.L2TokenLeafIdFrom),
-                ethers_1.BigNumber.from(txTransferReq.txAmount),
-                ethers_1.BigNumber.from(txTransferReq.L2AddrTo),
-                ethers_1.BigNumber.from(txTransferReq.L2TokenLeafIdTo),
-            ]).replaceAll('0x', '');
-            return {
-                r_chunks: Buffer.concat([Buffer.from(out_t, 'hex')], ts_types_1.MAX_CHUNKS_BYTES_PER_REQ),
-                o_chunks: Buffer.from(out_t, 'hex'),
-                isCritical: true,
-            };
-        case ts_types_1.TsTxType.AUCTION_LEND:
-            const out_al = Buffer.concat([
-                padAndToBuffer(txTransferReq.reqType, 1),
-                padAndToBuffer(txTransferReq.L2AddrFrom, 4),
-                padAndToBuffer(txTransferReq.L2TokenAddr, 2),
-                padAndToBuffer(txTransferReq.L2TokenLeafIdFrom, 2), padAndToBuffer(txTransferReq.amount, 16),
-            ], ts_types_1.CHUNK_BYTES_SIZE * 3);
-            return {
-                r_chunks: Buffer.concat([out_al], ts_types_1.MAX_CHUNKS_BYTES_PER_REQ),
-                o_chunks: out_al,
-                isCritical: false,
-            };
-        case ts_types_1.TsTxType.AUCTION_BORROW:
-            const out_ab = Buffer.concat([
-                padAndToBuffer(txTransferReq.reqType, 1),
-                padAndToBuffer(txTransferReq.L2AddrFrom, 4),
-                padAndToBuffer(txTransferReq.L2TokenAddr, 2),
-                padAndToBuffer(txTransferReq.L2TokenLeafIdFrom, 2), padAndToBuffer(txTransferReq.amount, 16),
-            ], ts_types_1.CHUNK_BYTES_SIZE * 3);
-            return {
-                r_chunks: Buffer.concat([out_ab], ts_types_1.MAX_CHUNKS_BYTES_PER_REQ),
-                o_chunks: out_ab,
-                isCritical: false,
-            };
-        // TODO: add more tx types
-        case ts_types_1.TsTxType.UNKNOWN:
-        default:
-            return {
-                r_chunks: Buffer.concat([
-                    padAndToBuffer(txTransferReq.reqType, 1),
-                ], ts_types_1.MAX_CHUNKS_BYTES_PER_REQ),
-                o_chunks: Buffer.concat([
-                    padAndToBuffer(txTransferReq.reqType, 1),
-                ], ts_types_1.CHUNK_BYTES_SIZE * 1),
-                isCritical: false,
-            };
-    }
+exports.encodeTxMarketOrderMessage = encodeTxMarketOrderMessage;
+function encodeTxMarketExchangeMessage(txMarketExchangeReq) {
+    return [
+        BigInt(ts_types_1.TsTxType.MARKET_EXCHANGE),
+        0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n,
+        BigInt(txMarketExchangeReq.orderLeafId),
+        0n, 0n, 0n
+    ];
 }
-exports.encodeRChunkBuffer = encodeRChunkBuffer;
+exports.encodeTxMarketExchangeMessage = encodeTxMarketExchangeMessage;
+function encodeTxMarketEndMessage(txMarketEndReq) {
+    return [
+        BigInt(ts_types_1.TsTxType.MARKET_END),
+        0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n,
+        BigInt(txMarketEndReq.orderLeafId),
+        0n, 0n, 0n
+    ];
+}
+exports.encodeTxMarketEndMessage = encodeTxMarketEndMessage;
 function padHexByBytes(hex, bytes) {
     // hex = hex.slice(2);
     if (hex.length % 2 !== 0)

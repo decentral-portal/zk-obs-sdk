@@ -5,7 +5,6 @@ const eddsa_1 = require("../eddsa");
 const poseidon_hash_dp_1 = require("../poseidon-hash-dp");
 const ts_types_1 = require("../ts-types/ts-types");
 const ts_tx_helper_1 = require("./ts-tx-helper");
-const bigint_helper_1 = require("../bigint-helper");
 const ts_helper_1 = require("./ts-helper");
 class TsRollupSigner {
     signer;
@@ -33,13 +32,33 @@ class TsRollupSigner {
         ];
         return eddsa_1.EddsaSigner.verify(eddsa_1.EddsaSigner.toE(msgHash), signature, tsPubKey);
     }
-    prepareTxWithdraw(nonce, L2Address, tokenAddr, amount) {
+    prepareTxDeposit(tokenId, amount, sender) {
+        const req = {
+            reqType: ts_types_1.TsTxType.DEPOSIT,
+            tokenId: tokenId,
+            stateAmt: amount.toString(),
+            nonce: '0',
+            sender: sender.toString(),
+        };
+        const msgHash = (0, poseidon_hash_dp_1.dpPoseidonHash)((0, ts_tx_helper_1.encodeTxDepositMessage)(req));
+        const eddsaSig = this.signPoseidonMessageHash(msgHash);
+        return {
+            ...req,
+            eddsaSig: {
+                S: eddsaSig.S.toString(),
+                R8: [
+                    eddsa_1.EddsaSigner.toObject(eddsaSig.R8[0]).toString(),
+                    eddsa_1.EddsaSigner.toObject(eddsaSig.R8[1]).toString(),
+                ]
+            },
+        };
+    }
+    prepareTxWithdraw(sender, tokenId, amount, nonce) {
         const req = {
             reqType: ts_types_1.TsTxType.WITHDRAW,
-            L2AddrFrom: L2Address.toString(),
-            L2AddrTo: ts_types_1.TsSystemAccountAddress.WITHDRAW_ADDR,
-            L2TokenAddr: tokenAddr,
-            amount: amount.toString(),
+            sender: sender.toString(),
+            tokenId: tokenId,
+            stateAmt: amount.toString(),
             nonce: nonce.toString(),
         };
         const msgHash = (0, poseidon_hash_dp_1.dpPoseidonHash)((0, ts_tx_helper_1.encodeTxWithdrawMessage)(req));
@@ -55,17 +74,17 @@ class TsRollupSigner {
             },
         };
     }
-    prepareTxTransfer(nonce, fromAddr, toAddr, tokenAddr, amount) {
+    prepareTxLimitOrder(sender, sellTokenId, sellAmt, nonce, buyTokenId, buyAmt) {
         const req = {
-            reqType: ts_types_1.TsTxType.TRANSFER,
-            L2AddrFrom: fromAddr.toString(),
-            L2AddrTo: toAddr.toString(),
-            L2TokenAddr: tokenAddr,
-            amount: amount.toString(),
+            reqType: ts_types_1.TsTxType.LIMIT_ORDER,
+            sender: sender.toString(),
+            sellTokenId: sellTokenId,
+            sellAmt: sellAmt.toString(),
             nonce: nonce.toString(),
-            txAmount: (0, bigint_helper_1.amountToTxAmountV2)(amount).toString(),
+            buyTokenId: buyTokenId,
+            buyAmt: buyAmt.toString(),
         };
-        const msgHash = (0, poseidon_hash_dp_1.dpPoseidonHash)((0, ts_tx_helper_1.encodeTxTransferMessage)(req));
+        const msgHash = (0, poseidon_hash_dp_1.dpPoseidonHash)((0, ts_tx_helper_1.encodeTxLimitOrderMessage)(req));
         const eddsaSig = this.signPoseidonMessageHash(msgHash);
         return {
             ...req,
@@ -78,70 +97,17 @@ class TsRollupSigner {
             },
         };
     }
-    prepareTxDeposit(toAddr, tokenAddr, amount) {
+    prepareMarketOrder(sender, sellTokenId, sellAmt, nonce, buyTokenId, buyAmt) {
         const req = {
-            reqType: ts_types_1.TsTxType.DEPOSIT,
-            L2AddrFrom: ts_types_1.TsSystemAccountAddress.MINT_ADDR,
-            L2AddrTo: toAddr.toString(),
-            L2TokenAddr: tokenAddr,
-            amount: amount.toString(),
-            nonce: '0',
+            reqType: ts_types_1.TsTxType.MARKET_ORDER,
+            sender: sender.toString(),
+            sellTokenId: sellTokenId,
+            sellAmt: sellAmt.toString(),
+            nonce: nonce.toString(),
+            buyTokenId: buyTokenId,
+            buyAmt: buyAmt.toString(),
         };
-        const msgHash = (0, poseidon_hash_dp_1.dpPoseidonHash)((0, ts_tx_helper_1.encodeTxDepositMessage)(req));
-        const eddsaSig = this.signPoseidonMessageHash(msgHash);
-        return {
-            ...req,
-            eddsaSig: {
-                S: eddsaSig.S.toString(),
-                R8: [
-                    eddsa_1.EddsaSigner.toObject(eddsaSig.R8[0]).toString(),
-                    eddsa_1.EddsaSigner.toObject(eddsaSig.R8[1]).toString(),
-                ]
-            },
-        };
-    }
-    prepareTxAuctionPlaceLend(data) {
-        const req = {
-            ...data,
-            L2AddrTo: ts_types_1.TsSystemAccountAddress.AUCTION_ADDR,
-            // txAmount: amountToTxAmountV2(BigInt(data.lendingAmt)).toString(),
-        };
-        const msgHash = (0, poseidon_hash_dp_1.dpPoseidonHash)((0, ts_tx_helper_1.encodeTxAuctionLendMessage)(req));
-        const eddsaSig = this.signPoseidonMessageHash(msgHash);
-        return {
-            ...req,
-            eddsaSig: {
-                S: eddsaSig.S.toString(),
-                R8: [
-                    eddsa_1.EddsaSigner.toObject(eddsaSig.R8[0]).toString(),
-                    eddsa_1.EddsaSigner.toObject(eddsaSig.R8[1]).toString(),
-                ]
-            },
-        };
-    }
-    prepareTxAuctionPlaceBorrow(data) {
-        const req = {
-            ...data,
-            L2AddrTo: ts_types_1.TsSystemAccountAddress.AUCTION_ADDR
-        };
-        const msgHash = (0, poseidon_hash_dp_1.dpPoseidonHash)((0, ts_tx_helper_1.encodeTxAuctionBorrowMessage)(req));
-        const eddsaSig = this.signPoseidonMessageHash(msgHash);
-        return {
-            ...req,
-            eddsaSig: {
-                S: eddsaSig.S.toString(),
-                R8: [
-                    eddsa_1.EddsaSigner.toObject(eddsaSig.R8[0]).toString(),
-                    eddsa_1.EddsaSigner.toObject(eddsaSig.R8[1]).toString(),
-                ]
-            },
-        };
-    }
-    prepareTxAuctionCancel(data) {
-        const req = {
-            ...data,
-        };
-        const msgHash = (0, poseidon_hash_dp_1.dpPoseidonHash)((0, ts_tx_helper_1.encodeTxAuctionCancelMessage)(req));
+        const msgHash = (0, poseidon_hash_dp_1.dpPoseidonHash)((0, ts_tx_helper_1.encodeTxMarketOrderMessage)(req));
         const eddsaSig = this.signPoseidonMessageHash(msgHash);
         return {
             ...req,

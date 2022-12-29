@@ -29,7 +29,7 @@ export declare const TsDeciaml: {
     TS_INTEREST_DEC: number;
 };
 export declare enum TsTokenAddress {
-    Unknown = "0",
+    UNKNOWN = "0",
     WETH = "1",
     USD = "2"
 }

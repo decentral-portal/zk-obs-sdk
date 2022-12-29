@@ -35,7 +35,7 @@ exports.TsDeciaml = {
 };
 var TsTokenAddress;
 (function (TsTokenAddress) {
-    TsTokenAddress["Unknown"] = "0";
+    TsTokenAddress["UNKNOWN"] = "0";
     TsTokenAddress["WETH"] = "1";
     TsTokenAddress["USD"] = "2";
 })(TsTokenAddress = exports.TsTokenAddress || (exports.TsTokenAddress = {}));

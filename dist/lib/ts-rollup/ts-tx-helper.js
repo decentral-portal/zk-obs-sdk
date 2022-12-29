@@ -88,8 +88,7 @@ function encodeTxMarketOrderMessage(txMarketOrderReq) {
         BigInt(txMarketOrderReq.nonce),
         0n, 0n,
         BigInt(txMarketOrderReq.buyTokenId),
-        BigInt(txMarketOrderReq.buyAmt),
-        0n, 0n, 0n, 0n
+        0n, 0n, 0n, 0n, 0n
     ];
 }
 exports.encodeTxMarketOrderMessage = encodeTxMarketOrderMessage;

@@ -74,9 +74,9 @@ class TsRollupSigner {
             },
         };
     }
-    prepareTxLimitOrder(sender, sellTokenId, sellAmt, nonce, buyTokenId, buyAmt) {
+    prepareTxOrder(marketType, sender, sellTokenId, sellAmt, nonce, buyTokenId, buyAmt) {
         const req = {
-            reqType: ts_types_1.TsTxType.LIMIT_ORDER,
+            reqType: marketType,
             sender: sender.toString(),
             sellTokenId: sellTokenId,
             sellAmt: sellAmt.toString(),
@@ -84,30 +84,13 @@ class TsRollupSigner {
             buyTokenId: buyTokenId,
             buyAmt: buyAmt.toString(),
         };
-        const msgHash = (0, poseidon_hash_dp_1.dpPoseidonHash)((0, ts_tx_helper_1.encodeTxLimitOrderMessage)(req));
-        const eddsaSig = this.signPoseidonMessageHash(msgHash);
-        return {
-            ...req,
-            eddsaSig: {
-                S: eddsaSig.S.toString(),
-                R8: [
-                    eddsa_1.EddsaSigner.toObject(eddsaSig.R8[0]).toString(),
-                    eddsa_1.EddsaSigner.toObject(eddsaSig.R8[1]).toString(),
-                ]
-            },
-        };
-    }
-    prepareTxMarketOrder(sender, sellTokenId, sellAmt, nonce, buyTokenId, buyAmt) {
-        const req = {
-            reqType: ts_types_1.TsTxType.MARKET_ORDER,
-            sender: sender.toString(),
-            sellTokenId: sellTokenId,
-            sellAmt: sellAmt.toString(),
-            nonce: nonce.toString(),
-            buyTokenId: buyTokenId,
-            buyAmt: buyAmt.toString(),
-        };
-        const msgHash = (0, poseidon_hash_dp_1.dpPoseidonHash)((0, ts_tx_helper_1.encodeTxMarketOrderMessage)(req));
+        let msgHash;
+        if (marketType === ts_types_1.TsTxType.LIMIT_ORDER) {
+            msgHash = (0, poseidon_hash_dp_1.dpPoseidonHash)((0, ts_tx_helper_1.encodeTxLimitOrderMessage)(req));
+        }
+        else {
+            msgHash = (0, poseidon_hash_dp_1.dpPoseidonHash)((0, ts_tx_helper_1.encodeTxMarketOrderMessage)(req));
+        }
         const eddsaSig = this.signPoseidonMessageHash(msgHash);
         return {
             ...req,

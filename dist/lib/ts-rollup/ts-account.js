@@ -36,9 +36,9 @@ class TsRollupSigner {
         const req = {
             reqType: ts_types_1.TsTxType.DEPOSIT,
             tokenId: tokenId,
-            stateAmt: amount.toString(),
+            stateAmt: amount,
             nonce: '0',
-            sender: sender.toString(),
+            sender: sender,
         };
         const msgHash = (0, poseidon_hash_dp_1.dpPoseidonHash)((0, ts_tx_helper_1.encodeTxDepositMessage)(req));
         const eddsaSig = this.signPoseidonMessageHash(msgHash);
@@ -56,10 +56,10 @@ class TsRollupSigner {
     prepareTxWithdraw(sender, tokenId, amount, nonce) {
         const req = {
             reqType: ts_types_1.TsTxType.WITHDRAW,
-            sender: sender.toString(),
+            sender: sender,
             tokenId: tokenId,
-            stateAmt: amount.toString(),
-            nonce: nonce.toString(),
+            stateAmt: amount,
+            nonce: nonce,
         };
         const msgHash = (0, poseidon_hash_dp_1.dpPoseidonHash)((0, ts_tx_helper_1.encodeTxWithdrawMessage)(req));
         const eddsaSig = this.signPoseidonMessageHash(msgHash);
@@ -77,12 +77,12 @@ class TsRollupSigner {
     prepareTxLimitOrder(sender, sellTokenId, sellAmt, nonce, buyTokenId, buyAmt) {
         const req = {
             reqType: ts_types_1.TsTxType.LIMIT_ORDER,
-            sender: sender.toString(),
+            sender: sender,
             sellTokenId: sellTokenId,
-            sellAmt: sellAmt.toString(),
-            nonce: nonce.toString(),
+            sellAmt: sellAmt,
+            nonce: nonce,
             buyTokenId: buyTokenId,
-            buyAmt: buyAmt.toString(),
+            buyAmt: buyAmt,
         };
         const msgHash = (0, poseidon_hash_dp_1.dpPoseidonHash)((0, ts_tx_helper_1.encodeTxLimitOrderMessage)(req));
         const eddsaSig = this.signPoseidonMessageHash(msgHash);
@@ -97,13 +97,13 @@ class TsRollupSigner {
             },
         };
     }
-    prepareTxMarketOrder(sender, sellTokenId, sellAmt, nonce, buyTokenId, buyAmt) {
+    prepareTxMarketOrder(sender, sellTokenId, sellAmt, nonce, buyTokenId) {
         const req = {
             reqType: ts_types_1.TsTxType.MARKET_ORDER,
-            sender: sender.toString(),
+            sender: sender,
             sellTokenId: sellTokenId,
-            sellAmt: sellAmt.toString(),
-            nonce: nonce.toString(),
+            sellAmt: sellAmt,
+            nonce: nonce,
             buyTokenId: buyTokenId,
         };
         const msgHash = (0, poseidon_hash_dp_1.dpPoseidonHash)((0, ts_tx_helper_1.encodeTxMarketOrderMessage)(req));

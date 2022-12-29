@@ -1,9 +1,9 @@
 import { EddsaSigner } from '../eddsa';
 import { dpPoseidonHash } from '../poseidon-hash-dp';
 import { EdDSASignaturePayload } from '../ts-types/eddsa-types';
-import { TsTxWithdrawRequest, TsTxWithdrawNonSignatureRequest, TsTxTransferRequest, TsTxDepositRequest, TsTxDepositNonSignatureRequest, TsTxAuctionLendNonSignatureRequest, TsTxAuctionBorrowNonSignatureRequest, TsTxAuctionBorrowRequest, TsTxAuctionLendRequest, TsTxAuctionCancelNonSignatureRequest, TsTxAuctionCancelRequest, TsTxRegisterRequest } from '../ts-types/ts-req-types';
-import { TsTokenAddress, TsSystemAccountAddress, TsTxType } from '../ts-types/ts-types';
-import { encodeTxDepositMessage, encodeTxTransferMessage, encodeTxAuctionLendMessage, encodeTxAuctionBorrowMessage, encodeTxWithdrawMessage, encodeTxAuctionCancelMessage } from './ts-tx-helper';
+import { TsTxWithdrawRequest, TsTxWithdrawNonSignatureRequest, TsTxDepositRequest, TsTxDepositNonSignatureRequest, TsTxLimitOrderRequest, TsTxLimitOrderNonSignatureRequest, TsTxMarketOrderRequest, TsTxMarketOrderNonSignatureRequest } from '../ts-types/ts-req-types';
+import { TsTokenAddress, TsTxType } from '../ts-types/ts-types';
+import { encodeTxDepositMessage, encodeTxLimitOrderMessage, encodeTxMarketOrderMessage, encodeTxWithdrawMessage } from './ts-tx-helper';
 import { amountToTxAmountV2 } from '../bigint-helper';
 import { tsHashFunc } from './ts-helper';
 
@@ -37,63 +37,14 @@ export class TsRollupSigner {
     ];
     return EddsaSigner.verify(EddsaSigner.toE(msgHash), signature, tsPubKey);
   }
-
-  prepareTxWithdraw(nonce: bigint, L2Address: bigint, tokenAddr: TsTokenAddress, amount: bigint): TsTxWithdrawRequest {
-    const req: TsTxWithdrawNonSignatureRequest = {
-      reqType: TsTxType.WITHDRAW,
-      L2AddrFrom: L2Address.toString(),
-      L2AddrTo: TsSystemAccountAddress.WITHDRAW_ADDR,
-      L2TokenAddr: tokenAddr,
-      amount: amount.toString(),
-      nonce: nonce.toString(),
-    };
-    const msgHash = dpPoseidonHash(encodeTxWithdrawMessage(req));
-    const eddsaSig = this.signPoseidonMessageHash(msgHash);
-    return {
-      ...req,
-      eddsaSig: {
-        S: eddsaSig.S.toString(),
-        R8: [
-          EddsaSigner.toObject(eddsaSig.R8[0]).toString(),
-          EddsaSigner.toObject(eddsaSig.R8[1]).toString(),
-        ]
-      },
-    };
-  }
-
-  prepareTxTransfer(nonce: bigint | number, fromAddr: bigint, toAddr: bigint, tokenAddr: TsTokenAddress, amount: bigint): TsTxTransferRequest {
-    const req = {
-      reqType: TsTxType.TRANSFER,
-      L2AddrFrom: fromAddr.toString(),
-      L2AddrTo: toAddr.toString(),
-      L2TokenAddr: tokenAddr,
-      amount: amount.toString(),
-      nonce: nonce.toString(),
-      txAmount: amountToTxAmountV2(amount).toString(),
-    };
-    const msgHash = dpPoseidonHash(encodeTxTransferMessage(req));
-    const eddsaSig = this.signPoseidonMessageHash(msgHash);
-
-    return {
-      ...req,
-      eddsaSig: {
-        S: eddsaSig.S.toString(),
-        R8: [
-          EddsaSigner.toObject(eddsaSig.R8[0]).toString(),
-          EddsaSigner.toObject(eddsaSig.R8[1]).toString(),
-        ]
-      },
-    };
-  }
-
-  prepareTxDeposit(toAddr: bigint, tokenAddr: TsTokenAddress, amount: bigint): TsTxDepositRequest {
+  
+  prepareTxDeposit(tokenId: TsTokenAddress, amount: bigint, sender: bigint): TsTxDepositRequest {
     const req: TsTxDepositNonSignatureRequest = {
       reqType: TsTxType.DEPOSIT,
-      L2AddrFrom: TsSystemAccountAddress.MINT_ADDR,
-      L2AddrTo: toAddr.toString(),
-      L2TokenAddr: tokenAddr,
-      amount: amount.toString(),
+      tokenId: tokenId,
+      stateAmt: amount.toString(),
       nonce: '0',
+      sender: sender.toString(),
     };
     const msgHash = dpPoseidonHash(encodeTxDepositMessage(req));
     const eddsaSig = this.signPoseidonMessageHash(msgHash);
@@ -110,15 +61,16 @@ export class TsRollupSigner {
     };
   }
 
-  prepareTxAuctionPlaceLend(data: Exclude<TsTxAuctionLendNonSignatureRequest, 'L2AddrTo'>): TsTxAuctionLendRequest {
-    const req: TsTxAuctionLendNonSignatureRequest = {
-      ...data,
-      L2AddrTo: TsSystemAccountAddress.AUCTION_ADDR,
-      // txAmount: amountToTxAmountV2(BigInt(data.lendingAmt)).toString(),
+  prepareTxWithdraw(sender: bigint, tokenId: TsTokenAddress, amount: bigint, nonce: bigint): TsTxWithdrawRequest {
+    const req: TsTxWithdrawNonSignatureRequest = {
+      reqType: TsTxType.WITHDRAW,
+      sender: sender.toString(),
+      tokenId: tokenId,
+      stateAmt: amount.toString(),
+      nonce: nonce.toString(),
     };
-    const msgHash = dpPoseidonHash(encodeTxAuctionLendMessage(req));
+    const msgHash = dpPoseidonHash(encodeTxWithdrawMessage(req));
     const eddsaSig = this.signPoseidonMessageHash(msgHash);
-
     return {
       ...req,
       eddsaSig: {
@@ -131,14 +83,18 @@ export class TsRollupSigner {
     };
   }
 
-  prepareTxAuctionPlaceBorrow(data: Exclude<TsTxAuctionBorrowNonSignatureRequest,  'L2AddrTo'>): TsTxAuctionBorrowRequest {
-    const req: TsTxAuctionBorrowNonSignatureRequest = {
-      ...data,
-      L2AddrTo: TsSystemAccountAddress.AUCTION_ADDR
+  prepareTxLimitOrder(sender: bigint, sellTokenId: TsTokenAddress, sellAmt: bigint, nonce: bigint, buyTokenId: TsTokenAddress, buyAmt: bigint): TsTxLimitOrderRequest {
+    const req: TsTxLimitOrderNonSignatureRequest = {
+      reqType: TsTxType.LIMIT_ORDER,
+      sender: sender.toString(),
+      sellTokenId: sellTokenId,
+      sellAmt: sellAmt.toString(),
+      nonce: nonce.toString(),
+      buyTokenId: buyTokenId,
+      buyAmt: buyAmt.toString(),
     };
-    const msgHash = dpPoseidonHash(encodeTxAuctionBorrowMessage(req));
+    const msgHash = dpPoseidonHash(encodeTxLimitOrderMessage(req));
     const eddsaSig = this.signPoseidonMessageHash(msgHash);
-
     return {
       ...req,
       eddsaSig: {
@@ -151,13 +107,18 @@ export class TsRollupSigner {
     };
   }
 
-  prepareTxAuctionCancel(data: Exclude<TsTxAuctionCancelNonSignatureRequest,  'L2AddrFrom'>): TsTxAuctionCancelRequest {
-    const req: TsTxAuctionCancelNonSignatureRequest = {
-      ...data,
+  prepareMarketOrder(sender: bigint, sellTokenId: TsTokenAddress, sellAmt: bigint, nonce: bigint, buyTokenId: TsTokenAddress, buyAmt: bigint): TsTxMarketOrderRequest {
+    const req: TsTxMarketOrderNonSignatureRequest = {
+      reqType: TsTxType.MARKET_ORDER,
+      sender: sender.toString(),
+      sellTokenId: sellTokenId,
+      sellAmt: sellAmt.toString(),
+      nonce: nonce.toString(),
+      buyTokenId: buyTokenId,
+      buyAmt: buyAmt.toString(),
     };
-    const msgHash = dpPoseidonHash(encodeTxAuctionCancelMessage(req));
+    const msgHash = dpPoseidonHash(encodeTxMarketOrderMessage(req));
     const eddsaSig = this.signPoseidonMessageHash(msgHash);
-
     return {
       ...req,
       eddsaSig: {

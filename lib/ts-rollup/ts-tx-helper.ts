@@ -1,271 +1,121 @@
 import { BigNumber, ethers } from 'ethers';
-import { TsTxAuctionBorrowNonSignatureRequest, TsTxAuctionCancelNonSignatureRequest, TsTxAuctionLendNonSignatureRequest, TsTxDepositNonSignatureRequest, TsTxDepositRequest, TsTxRegisterRequest, TsTxTransferNonSignatureRequest, TsTxTransferRequest } from '../ts-types/ts-req-types';
-import { CHUNK_BYTES_SIZE, MAX_CHUNKS_BYTES_PER_REQ, TsSystemAccountAddress, TsTokenAddress, TsTxType } from '../ts-types/ts-types';
+import { TsTxDepositNonSignatureRequest, TsTxDepositRequest, TsTxLimitEndNonSignatureRequest, TsTxLimitEndRequest, TsTxLimitExchangeNonSignatureRequest, TsTxLimitExchangeRequest, TsTxLimitOrderNonSignatureRequest, TsTxLimitOrderRequest, TsTxLimitStartNonSignatureRequest, TsTxLimitStartRequest, TsTxMarketEndNonSignatureRequest, TsTxMarketEndRequest, TsTxMarketExchangeNonSignatureRequest, TsTxMarketExchangeRequest, TsTxMarketOrderNonSignatureRequest, TsTxMarketOrderRequest, TsTxRegisterRequest, TsTxWithdrawNonSignatureRequest, TsTxWithdrawRequest } from '../ts-types/ts-req-types';
+import { TsSystemAccountAddress, TsTokenAddress, TsTxType } from '../ts-types/ts-types';
 
 // [L2AddrFrom, L2AddrTo, L2TokenAddr, tokenAmt, nonce, arg0, arg1, arg2, arg3, arg4]
-export type TsTxRequestDatasType = [
+export type TsTxRequestDataType = [
   bigint, bigint, bigint, bigint, bigint,
-  bigint, bigint, bigint, bigint, bigint 
-]; 
-
-export type TsTxAuctionRequestDatasType = [
   bigint, bigint, bigint, bigint, bigint,
-  bigint, bigint, bigint, bigint, bigint, 
-  bigint,
-]; 
+  bigint, bigint, bigint
+];
 
+export function encodeTxRegisterMessage(txRegisterReq: TsTxRegisterRequest): TsTxRequestDataType {
+  return [
+    BigInt(TsTxType.REGISTER),
+    0n,
+    BigInt(txRegisterReq.tokenId),
+    BigInt(txRegisterReq.stateAmt),
+    BigInt(txRegisterReq.nonce),
+    BigInt(txRegisterReq.sender),
+    BigInt(txRegisterReq.tsAddr),
+    0n, 0n, 0n, 0n, 0n, 0n,
+  ];
+}
 
-export function encodeTxDepositMessage(txDepositReq: TsTxDepositNonSignatureRequest): TsTxRequestDatasType {
+export function encodeTxDepositMessage(txDepositReq: TsTxDepositRequest | TsTxDepositNonSignatureRequest): TsTxRequestDataType {
   return [
     BigInt(TsTxType.DEPOSIT),
-    BigInt(txDepositReq.L2AddrTo),
-    BigInt(txDepositReq.L2TokenAddr),
-    BigInt(txDepositReq.amount),
     0n,
-    0n, 0n, 0n, 0n, 0n, 
+    BigInt(txDepositReq.tokenId),
+    BigInt(txDepositReq.stateAmt),
+    BigInt(txDepositReq.nonce),
+    BigInt(txDepositReq.sender),
+    0n, 0n, 0n, 0n, 0n, 0n, 0n
   ];
 }
 
-export function encodeTxTransferMessage(txTransferReq: TsTxTransferNonSignatureRequest): TsTxRequestDatasType {
-  return [
-    BigInt(TsTxType.TRANSFER),
-    BigInt(txTransferReq.L2AddrFrom),
-    BigInt(txTransferReq.L2TokenAddr),
-    BigInt(txTransferReq.txAmount || 0),
-    BigInt(txTransferReq.nonce),
-    BigInt(txTransferReq.L2AddrTo),
-    0n, 0n, 0n, 0n,
-  ];
-}
-
-export function encodeTxWithdrawMessage(txTransferReq: TsTxTransferNonSignatureRequest): TsTxRequestDatasType {
+export function encodeTxWithdrawMessage(txWithdrawReq: TsTxWithdrawRequest | TsTxWithdrawNonSignatureRequest): TsTxRequestDataType {
   return [
     BigInt(TsTxType.WITHDRAW),
-    BigInt(txTransferReq.L2AddrFrom),
-    BigInt(txTransferReq.L2TokenAddr),
-    BigInt(txTransferReq.amount),
-    BigInt(txTransferReq.nonce),
-    0n, 0n, 0n, 0n, 0n,
+    BigInt(txWithdrawReq.sender),
+    BigInt(txWithdrawReq.tokenId),
+    BigInt(txWithdrawReq.stateAmt),
+    BigInt(txWithdrawReq.nonce),
+    0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n
   ];
 }
 
-export function encodeTxAuctionLendMessage(txAuctionLendReq: TsTxAuctionLendNonSignatureRequest): TsTxRequestDatasType {
+export function encodeTxLimitOrderMessage(txLimitOrderReq: TsTxLimitOrderRequest | TsTxLimitOrderNonSignatureRequest): TsTxRequestDataType {
   return [
-    BigInt(TsTxType.AUCTION_LEND),
-    BigInt(txAuctionLendReq.L2AddrFrom),
-    BigInt(txAuctionLendReq.L2TokenAddrLending),
-    BigInt(txAuctionLendReq.lendingAmt),
-    BigInt(txAuctionLendReq.nonce),
-    BigInt(txAuctionLendReq.maturityDate),
-    BigInt(txAuctionLendReq.expiredTime),
-    BigInt(txAuctionLendReq.interest),
-    0n, 0n,
-    // txId,
-  ];
+    BigInt(TsTxType.LIMIT_ORDER),
+    BigInt(txLimitOrderReq.sender),
+    BigInt(txLimitOrderReq.sellTokenId),
+    BigInt(txLimitOrderReq.sellAmt),
+    BigInt(txLimitOrderReq.nonce),
+    0n, 0n, 
+    BigInt(txLimitOrderReq.buyTokenId),
+    BigInt(txLimitOrderReq.buyAmt),
+    0n, 0n, 0n, 0n
+  ]
 }
 
-export function encodeTxAuctionBorrowMessage(txAuctionBorrowReq: TsTxAuctionBorrowNonSignatureRequest): TsTxRequestDatasType {
+export function encodeTxLimitStartMessage(txLimitStartReq: TsTxLimitStartRequest | TsTxLimitStartNonSignatureRequest): TsTxRequestDataType {
   return [
-    BigInt(TsTxType.AUCTION_BORROW),
-    BigInt(txAuctionBorrowReq.L2AddrFrom),
-    BigInt(txAuctionBorrowReq.L2TokenAddrCollateral),
-    BigInt(txAuctionBorrowReq.collateralAmt),
-    BigInt(txAuctionBorrowReq.nonce),
-    BigInt(txAuctionBorrowReq.maturityDate),
-    BigInt(txAuctionBorrowReq.expiredTime),
-    BigInt(txAuctionBorrowReq.interest),
-    BigInt(txAuctionBorrowReq.L2TokenAddrBorrowing),
-    BigInt(txAuctionBorrowReq.borrowingAmt),
-    // txId,
-  ];
+    BigInt(TsTxType.LIMIT_START),
+    0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n,
+    BigInt(txLimitStartReq.orderLeafId),
+    0n, 0n, 0n
+  ]
 }
 
-export function encodeTxAuctionCancelMessage(txAuctionCancelReq: TsTxAuctionCancelNonSignatureRequest): TsTxRequestDatasType {
+export function encodeTxLimitExchangeMessage(txLimitExchangeReq: TsTxLimitExchangeRequest | TsTxLimitExchangeNonSignatureRequest): TsTxRequestDataType {
   return [
-    BigInt(TsTxType.AUCTION_CANCEL),
-    BigInt(txAuctionCancelReq.L2AddrTo),
-    BigInt(txAuctionCancelReq.L2TokenAddrRefunded),
-    BigInt(txAuctionCancelReq.amount),
-    BigInt(txAuctionCancelReq.nonce),
-    BigInt(txAuctionCancelReq.orderLeafId),
-    0n, 0n, 0n, 0n,
-    // txId,
-  ];
+    BigInt(TsTxType.LIMIT_EXCHANGE),
+    0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n,
+    BigInt(txLimitExchangeReq.orderLeafId),
+    0n, 0n, 0n
+  ]
 }
 
-export function getEmptyRegisterTx() {
-  const req: TsTxRegisterRequest = {
-    L1Addr: '0x00',
-    reqType: TsTxType.REGISTER,
-    L2AddrFrom: TsSystemAccountAddress.BURN_ADDR,
-    L2TokenAddr: TsTokenAddress.Unknown,
-    tsPubKey: [ '0', '0' ],
-    amount: '0',
-  };
-  return req;
+export function encodeTxLimitEndMessage(txLimitEndReq: TsTxLimitEndRequest | TsTxLimitEndNonSignatureRequest): TsTxRequestDataType {
+  return [
+    BigInt(TsTxType.LIMIT_END),
+    0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n,
+    BigInt(txLimitEndReq.orderLeafId),
+    0n, 0n, 0n
+  ]
 }
 
-export function getEmptyMainTx() {
-  const req: TsTxDepositRequest = {
-    reqType: TsTxType.DEPOSIT,
-    L2AddrFrom: TsSystemAccountAddress.MINT_ADDR,
-    L2AddrTo: TsSystemAccountAddress.WITHDRAW_ADDR,
-    L2TokenAddr: TsTokenAddress.Unknown,
-    amount: '0',
-    nonce: '0',
-    eddsaSig: {
-      R8: ['0', '0'],
-      S: '0'
-    }
-  };
-  return req;
+export function encodeTxMarketOrderMessage(txMarketOrderReq: TsTxMarketOrderRequest | TsTxMarketOrderNonSignatureRequest): TsTxRequestDataType {
+  return [
+    BigInt(TsTxType.MARKET_ORDER),
+    BigInt(txMarketOrderReq.sender),
+    BigInt(txMarketOrderReq.sellTokenId),
+    BigInt(txMarketOrderReq.sellAmt),
+    BigInt(txMarketOrderReq.nonce),
+    0n, 0n, 
+    BigInt(txMarketOrderReq.buyTokenId),
+    BigInt(txMarketOrderReq.buyAmt),
+    0n, 0n, 0n, 0n
+  ]
 }
 
+export function encodeTxMarketExchangeMessage(txMarketExchangeReq: TsTxMarketExchangeRequest | TsTxMarketExchangeNonSignatureRequest): TsTxRequestDataType {
+  return [
+    BigInt(TsTxType.MARKET_EXCHANGE),
+    0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n,
+    BigInt(txMarketExchangeReq.orderLeafId),
+    0n, 0n, 0n
+  ]
+}
 
-export function encodeRChunkBuffer(txTransferReq: TsTxTransferRequest) {
-  if(!txTransferReq.L2TokenLeafIdFrom) {
-    throw new Error('L2TokenLeafIdFrom is required');
-  }
-  switch (txTransferReq.reqType) {
-    case TsTxType.REGISTER:
-      if(!txTransferReq.hashedTsPubKey) {
-        throw new Error('hashedTsPubKey is required');
-      }
-      const out_r = ethers.utils.solidityPack(
-        ['uint8', 'uint32', 'uint16', 'uint16', 'uint128', 'uint160',],
-        [
-          BigNumber.from(txTransferReq.reqType),
-          BigNumber.from(txTransferReq.L2AddrTo),
-          BigNumber.from(txTransferReq.L2TokenAddr),
-          BigNumber.from(txTransferReq.L2TokenLeafIdFrom),
-          BigNumber.from(txTransferReq.amount),
-          BigNumber.from(txTransferReq.hashedTsPubKey),
-        ]
-      ).replaceAll('0x', '');
-      return {
-        r_chunks: Buffer.concat([Buffer.from(out_r, 'hex')], MAX_CHUNKS_BYTES_PER_REQ),
-        o_chunks: out_r,
-        isCritical: true,
-      };
-    case TsTxType.DEPOSIT:
-      const out_d = ethers.utils.solidityPack(
-        ['uint8', 'uint32', 'uint16', 'uint16', 'uint128',],
-        [
-          BigNumber.from(txTransferReq.reqType),
-          BigNumber.from(txTransferReq.L2AddrTo),
-          BigNumber.from(txTransferReq.L2TokenAddr),
-          BigNumber.from(txTransferReq.L2TokenLeafIdFrom),
-          BigNumber.from(txTransferReq.amount),
-        ]
-      ).replaceAll('0x', '');
-      return {
-        r_chunks: Buffer.concat([Buffer.from(out_d, 'hex')], MAX_CHUNKS_BYTES_PER_REQ),
-        o_chunks: Buffer.from(out_d, 'hex'),
-        isCritical: true,
-      };
-    case TsTxType.WITHDRAW:
-      const out_w = ethers.utils.solidityPack(
-        ['uint8', 'uint32', 'uint16', 'uint16', 'uint48', 'uint32', 'uint16',],
-        [
-          BigNumber.from(txTransferReq.reqType),
-          BigNumber.from(txTransferReq.L2AddrFrom),
-          BigNumber.from(txTransferReq.L2TokenAddr),
-          BigNumber.from(txTransferReq.L2TokenLeafIdFrom),
-          BigNumber.from(txTransferReq.amount),
-          BigNumber.from(txTransferReq.L2AddrTo),
-          BigNumber.from(txTransferReq.L2TokenLeafIdTo),
-        ]
-      ).replaceAll('0x', '');
-      return {
-        r_chunks: Buffer.concat([Buffer.from(out_w, 'hex')], MAX_CHUNKS_BYTES_PER_REQ),
-        o_chunks: Buffer.from(out_w, 'hex'),
-        isCritical: true,
-      };
-    case TsTxType.FORCE_WITHDRAW:
-      const out_fw = Buffer.concat([
-        padAndToBuffer(txTransferReq.reqType, 1),
-        padAndToBuffer(txTransferReq.L2AddrFrom, 4),
-        padAndToBuffer(txTransferReq.L2TokenAddr, 2),
-        padAndToBuffer(txTransferReq.L2TokenLeafIdFrom, 2),padAndToBuffer(txTransferReq.amount, 16),
-      ], CHUNK_BYTES_SIZE * 5);
-      return {
-        r_chunks: Buffer.concat([out_fw], MAX_CHUNKS_BYTES_PER_REQ),
-        o_chunks: out_fw,
-        isCritical: true,
-      };
-    case TsTxType.TRANSFER:
-      if(!txTransferReq.L2TokenLeafIdTo) {
-        throw new Error('L2TokenLeafIdTo is required');
-      }
-      console.log({
-        txTransferReq
-      });
-      console.log({
-        raw: [
-          BigNumber.from(txTransferReq.reqType),
-          BigNumber.from(txTransferReq.L2AddrFrom),
-          BigNumber.from(txTransferReq.L2TokenAddr),
-          BigNumber.from(txTransferReq.L2TokenLeafIdFrom),
-          BigNumber.from(txTransferReq.txAmount),
-          BigNumber.from(txTransferReq.L2AddrTo),
-          BigNumber.from(txTransferReq.L2TokenLeafIdTo),
-        ]
-      });
-      const out_t = ethers.utils.solidityPack(
-        ['uint8', 'uint32', 'uint16', 'uint16', 'uint48', 'uint32', 'uint16',],
-        [
-          BigNumber.from(txTransferReq.reqType),
-          BigNumber.from(txTransferReq.L2AddrFrom),
-          BigNumber.from(txTransferReq.L2TokenAddr),
-          BigNumber.from(txTransferReq.L2TokenLeafIdFrom),
-          BigNumber.from(txTransferReq.txAmount),
-          BigNumber.from(txTransferReq.L2AddrTo),
-          BigNumber.from(txTransferReq.L2TokenLeafIdTo),
-        ]
-      ).replaceAll('0x', '');
-      return {
-        r_chunks: Buffer.concat([Buffer.from(out_t, 'hex')], MAX_CHUNKS_BYTES_PER_REQ),
-        o_chunks: Buffer.from(out_t, 'hex'),
-        isCritical: true,
-      };
-    case TsTxType.AUCTION_LEND:
-      const out_al = Buffer.concat([
-        padAndToBuffer(txTransferReq.reqType, 1),
-        padAndToBuffer(txTransferReq.L2AddrFrom, 4),
-        padAndToBuffer(txTransferReq.L2TokenAddr, 2),
-        padAndToBuffer(txTransferReq.L2TokenLeafIdFrom, 2),padAndToBuffer(txTransferReq.amount, 16),
-      ], CHUNK_BYTES_SIZE * 3);
-      return {
-        r_chunks: Buffer.concat([out_al], MAX_CHUNKS_BYTES_PER_REQ),
-        o_chunks: out_al,
-        isCritical: false,
-      };
-    case TsTxType.AUCTION_BORROW:
-      const out_ab = Buffer.concat([
-        padAndToBuffer(txTransferReq.reqType, 1),
-        padAndToBuffer(txTransferReq.L2AddrFrom, 4),
-        padAndToBuffer(txTransferReq.L2TokenAddr, 2),
-        padAndToBuffer(txTransferReq.L2TokenLeafIdFrom, 2),padAndToBuffer(txTransferReq.amount, 16),
-      ], CHUNK_BYTES_SIZE * 3);
-      return {
-        r_chunks: Buffer.concat([out_ab], MAX_CHUNKS_BYTES_PER_REQ),
-        o_chunks: out_ab,
-        isCritical: false,
-      };
-    // TODO: add more tx types
-    case TsTxType.UNKNOWN:
-    default:
-      return {
-        r_chunks: Buffer.concat([
-          padAndToBuffer(txTransferReq.reqType, 1),
-        ], MAX_CHUNKS_BYTES_PER_REQ),
-        o_chunks: Buffer.concat([
-          padAndToBuffer(txTransferReq.reqType, 1),
-        ], CHUNK_BYTES_SIZE * 1),
-        isCritical: false,
-      };
-  }
-  
+export function encodeTxMarketEndMessage(txMarketEndReq: TsTxMarketEndRequest | TsTxMarketEndNonSignatureRequest): TsTxRequestDataType {
+  return [
+    BigInt(TsTxType.MARKET_END),
+    0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n,
+    BigInt(txMarketEndReq.orderLeafId),
+    0n, 0n, 0n
+  ]
 }
 
 function padHexByBytes(hex: string, bytes: number): string {

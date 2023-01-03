@@ -18,10 +18,11 @@ export interface TsTxSignaturePayload {
 /** Client Request Types */
 /** Register */
 export interface TsTxRegisterRequest extends ITxRequest {
+    L1Addr: string;
     tokenId: TsTokenAddress;
     stateAmt: string;
-    nonce: string;
     sender: string;
+    tsPubKey: [string, string];
     tsAddr: string;
 }
 /** Deposit */

@@ -1,6 +1,6 @@
 {
     "name": "zk-obs-sdk",
-    "version": "0.0.21",
+    "version": "0.0.23",
     "main": "dist/lib/index.js",
     "license": "MIT",
     "scripts": {

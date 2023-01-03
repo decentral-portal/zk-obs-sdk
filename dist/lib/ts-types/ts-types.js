@@ -1,6 +1,16 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.TsTokenAddress = exports.TsDeciaml = exports.TsTxType = exports.TsDefaultValue = exports.TsSystemAccountAddress = void 0;
+exports.TsTokenAddress = exports.TsDeciaml = exports.TsTxType = exports.TsDefaultValue = exports.TsSystemAccountAddress = exports.getOChunksSize = exports.MAX_CHUNKS_BYTES_PER_REQ = exports.MAX_CHUNKS_PER_REQ = exports.MIN_CHUNKS_PER_REQ = exports.CHUNK_BITS_SIZE = exports.CHUNK_BYTES_SIZE = exports.LEN_OF_REQUEST = void 0;
+exports.LEN_OF_REQUEST = 10;
+exports.CHUNK_BYTES_SIZE = 12;
+exports.CHUNK_BITS_SIZE = exports.CHUNK_BYTES_SIZE * 8;
+exports.MIN_CHUNKS_PER_REQ = 3;
+exports.MAX_CHUNKS_PER_REQ = 9;
+exports.MAX_CHUNKS_BYTES_PER_REQ = exports.MAX_CHUNKS_PER_REQ * exports.CHUNK_BYTES_SIZE;
+function getOChunksSize(batchSize) {
+    return exports.MAX_CHUNKS_PER_REQ * batchSize;
+}
+exports.getOChunksSize = getOChunksSize;
 var TsSystemAccountAddress;
 (function (TsSystemAccountAddress) {
     TsSystemAccountAddress["BURN_ADDR"] = "0";

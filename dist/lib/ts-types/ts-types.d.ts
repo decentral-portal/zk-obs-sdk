@@ -1,3 +1,10 @@
+export declare const LEN_OF_REQUEST = 10;
+export declare const CHUNK_BYTES_SIZE = 12;
+export declare const CHUNK_BITS_SIZE: number;
+export declare const MIN_CHUNKS_PER_REQ = 3;
+export declare const MAX_CHUNKS_PER_REQ = 9;
+export declare const MAX_CHUNKS_BYTES_PER_REQ: number;
+export declare function getOChunksSize(batchSize: number): number;
 export declare enum TsSystemAccountAddress {
     BURN_ADDR = "0",
     MINT_ADDR = "0",
@@ -34,7 +41,6 @@ export declare enum TsTokenAddress {
     USD = "2"
 }
 export interface TsTokenInfo {
-    tokenAddr: TsTokenAddress;
     amount: bigint;
     lockAmt: bigint;
 }

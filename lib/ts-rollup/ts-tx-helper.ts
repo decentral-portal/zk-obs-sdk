@@ -14,7 +14,7 @@ export function encodeTxRegisterMessage(txRegisterReq: TsTxRegisterRequest): TsT
     0n,
     BigInt(txRegisterReq.tokenId),
     BigInt(txRegisterReq.stateAmt),
-    BigInt(txRegisterReq.nonce),
+    0n,
     BigInt(txRegisterReq.sender),
     BigInt(txRegisterReq.tsAddr),
     0n, 0n, 0n,

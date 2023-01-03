@@ -1,3 +1,13 @@
+export const LEN_OF_REQUEST = 10;
+export const CHUNK_BYTES_SIZE = 12;
+export const CHUNK_BITS_SIZE = CHUNK_BYTES_SIZE * 8;
+export const MIN_CHUNKS_PER_REQ = 3;
+export const MAX_CHUNKS_PER_REQ = 9;
+export const MAX_CHUNKS_BYTES_PER_REQ = MAX_CHUNKS_PER_REQ * CHUNK_BYTES_SIZE;
+export function getOChunksSize(batchSize: number) {
+  return MAX_CHUNKS_PER_REQ * batchSize;
+}
+
 export enum TsSystemAccountAddress {
   BURN_ADDR = '0',
   MINT_ADDR = '0',
@@ -33,13 +43,12 @@ export const TsDeciaml = {
 };
 
 export enum TsTokenAddress {
-    UNKNOWN = '0',
-    WETH = '1',
-    USD = '2',
-  }
+  UNKNOWN = '0',
+  WETH = '1',
+  USD = '2',
+}
 
 export interface TsTokenInfo {
-    tokenAddr: TsTokenAddress;
     amount: bigint;
     lockAmt: bigint;
 }

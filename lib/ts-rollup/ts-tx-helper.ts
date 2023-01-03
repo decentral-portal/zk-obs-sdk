@@ -6,7 +6,6 @@ import { TsSystemAccountAddress, TsTokenAddress, TsTxType } from '../ts-types/ts
 export type TsTxRequestDataType = [
   bigint, bigint, bigint, bigint, bigint,
   bigint, bigint, bigint, bigint, bigint,
-  bigint, bigint, bigint
 ];
 
 export function encodeTxRegisterMessage(txRegisterReq: TsTxRegisterRequest): TsTxRequestDataType {
@@ -18,7 +17,7 @@ export function encodeTxRegisterMessage(txRegisterReq: TsTxRegisterRequest): TsT
     BigInt(txRegisterReq.nonce),
     BigInt(txRegisterReq.sender),
     BigInt(txRegisterReq.tsAddr),
-    0n, 0n, 0n, 0n, 0n, 0n,
+    0n, 0n, 0n,
   ];
 }
 
@@ -30,7 +29,7 @@ export function encodeTxDepositMessage(txDepositReq: TsTxDepositRequest | TsTxDe
     BigInt(txDepositReq.stateAmt),
     BigInt(txDepositReq.nonce),
     BigInt(txDepositReq.sender),
-    0n, 0n, 0n, 0n, 0n, 0n, 0n
+    0n, 0n, 0n, 0n,
   ];
 }
 
@@ -41,7 +40,7 @@ export function encodeTxWithdrawMessage(txWithdrawReq: TsTxWithdrawRequest | TsT
     BigInt(txWithdrawReq.tokenId),
     BigInt(txWithdrawReq.stateAmt),
     BigInt(txWithdrawReq.nonce),
-    0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n
+    0n, 0n, 0n, 0n, 0n,
   ];
 }
 
@@ -55,7 +54,7 @@ export function encodeTxLimitOrderMessage(txLimitOrderReq: TsTxLimitOrderRequest
     0n, 0n, 
     BigInt(txLimitOrderReq.buyTokenId),
     BigInt(txLimitOrderReq.buyAmt),
-    0n, 0n, 0n, 0n
+    0n,
   ]
 }
 
@@ -64,7 +63,7 @@ export function encodeTxLimitStartMessage(txLimitStartReq: TsTxLimitStartRequest
     BigInt(TsTxType.LIMIT_START),
     0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n,
     BigInt(txLimitStartReq.orderLeafId),
-    0n, 0n, 0n
+    
   ]
 }
 
@@ -73,7 +72,7 @@ export function encodeTxLimitExchangeMessage(txLimitExchangeReq: TsTxLimitExchan
     BigInt(TsTxType.LIMIT_EXCHANGE),
     0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n,
     BigInt(txLimitExchangeReq.orderLeafId),
-    0n, 0n, 0n
+    
   ]
 }
 
@@ -82,7 +81,7 @@ export function encodeTxLimitEndMessage(txLimitEndReq: TsTxLimitEndRequest | TsT
     BigInt(TsTxType.LIMIT_END),
     0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n,
     BigInt(txLimitEndReq.orderLeafId),
-    0n, 0n, 0n
+    
   ]
 }
 
@@ -95,7 +94,7 @@ export function encodeTxMarketOrderMessage(txMarketOrderReq: TsTxMarketOrderRequ
     BigInt(txMarketOrderReq.nonce),
     0n, 0n, 
     BigInt(txMarketOrderReq.buyTokenId),
-    0n, 0n, 0n, 0n, 0n
+    0n, 0n,
   ]
 }
 
@@ -104,7 +103,7 @@ export function encodeTxMarketExchangeMessage(txMarketExchangeReq: TsTxMarketExc
     BigInt(TsTxType.MARKET_EXCHANGE),
     0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n,
     BigInt(txMarketExchangeReq.orderLeafId),
-    0n, 0n, 0n
+    
   ]
 }
 
@@ -113,7 +112,7 @@ export function encodeTxMarketEndMessage(txMarketEndReq: TsTxMarketEndRequest | 
     BigInt(TsTxType.MARKET_END),
     0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n,
     BigInt(txMarketEndReq.orderLeafId),
-    0n, 0n, 0n
+    
   ]
 }
 

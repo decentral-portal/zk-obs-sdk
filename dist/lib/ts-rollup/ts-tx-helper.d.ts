@@ -10,9 +10,6 @@ export type TsTxRequestDataType = [
     bigint,
     bigint,
     bigint,
-    bigint,
-    bigint,
-    bigint,
     bigint
 ];
 export declare function encodeTxRegisterMessage(txRegisterReq: TsTxRegisterRequest): TsTxRequestDataType;

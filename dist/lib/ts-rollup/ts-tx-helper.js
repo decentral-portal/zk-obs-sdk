@@ -11,7 +11,7 @@ function encodeTxRegisterMessage(txRegisterReq) {
         BigInt(txRegisterReq.nonce),
         BigInt(txRegisterReq.sender),
         BigInt(txRegisterReq.tsAddr),
-        0n, 0n, 0n, 0n, 0n, 0n,
+        0n, 0n, 0n,
     ];
 }
 exports.encodeTxRegisterMessage = encodeTxRegisterMessage;
@@ -23,7 +23,7 @@ function encodeTxDepositMessage(txDepositReq) {
         BigInt(txDepositReq.stateAmt),
         BigInt(txDepositReq.nonce),
         BigInt(txDepositReq.sender),
-        0n, 0n, 0n, 0n, 0n, 0n, 0n
+        0n, 0n, 0n, 0n,
     ];
 }
 exports.encodeTxDepositMessage = encodeTxDepositMessage;
@@ -34,7 +34,7 @@ function encodeTxWithdrawMessage(txWithdrawReq) {
         BigInt(txWithdrawReq.tokenId),
         BigInt(txWithdrawReq.stateAmt),
         BigInt(txWithdrawReq.nonce),
-        0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n
+        0n, 0n, 0n, 0n, 0n,
     ];
 }
 exports.encodeTxWithdrawMessage = encodeTxWithdrawMessage;
@@ -48,7 +48,7 @@ function encodeTxLimitOrderMessage(txLimitOrderReq) {
         0n, 0n,
         BigInt(txLimitOrderReq.buyTokenId),
         BigInt(txLimitOrderReq.buyAmt),
-        0n, 0n, 0n, 0n
+        0n,
     ];
 }
 exports.encodeTxLimitOrderMessage = encodeTxLimitOrderMessage;
@@ -57,7 +57,6 @@ function encodeTxLimitStartMessage(txLimitStartReq) {
         BigInt(ts_types_1.TsTxType.LIMIT_START),
         0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n,
         BigInt(txLimitStartReq.orderLeafId),
-        0n, 0n, 0n
     ];
 }
 exports.encodeTxLimitStartMessage = encodeTxLimitStartMessage;
@@ -66,7 +65,6 @@ function encodeTxLimitExchangeMessage(txLimitExchangeReq) {
         BigInt(ts_types_1.TsTxType.LIMIT_EXCHANGE),
         0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n,
         BigInt(txLimitExchangeReq.orderLeafId),
-        0n, 0n, 0n
     ];
 }
 exports.encodeTxLimitExchangeMessage = encodeTxLimitExchangeMessage;
@@ -75,7 +73,6 @@ function encodeTxLimitEndMessage(txLimitEndReq) {
         BigInt(ts_types_1.TsTxType.LIMIT_END),
         0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n,
         BigInt(txLimitEndReq.orderLeafId),
-        0n, 0n, 0n
     ];
 }
 exports.encodeTxLimitEndMessage = encodeTxLimitEndMessage;
@@ -88,7 +85,7 @@ function encodeTxMarketOrderMessage(txMarketOrderReq) {
         BigInt(txMarketOrderReq.nonce),
         0n, 0n,
         BigInt(txMarketOrderReq.buyTokenId),
-        0n, 0n, 0n, 0n, 0n
+        0n, 0n,
     ];
 }
 exports.encodeTxMarketOrderMessage = encodeTxMarketOrderMessage;
@@ -97,7 +94,6 @@ function encodeTxMarketExchangeMessage(txMarketExchangeReq) {
         BigInt(ts_types_1.TsTxType.MARKET_EXCHANGE),
         0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n,
         BigInt(txMarketExchangeReq.orderLeafId),
-        0n, 0n, 0n
     ];
 }
 exports.encodeTxMarketExchangeMessage = encodeTxMarketExchangeMessage;
@@ -106,7 +102,6 @@ function encodeTxMarketEndMessage(txMarketEndReq) {
         BigInt(ts_types_1.TsTxType.MARKET_END),
         0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n,
         BigInt(txMarketEndReq.orderLeafId),
-        0n, 0n, 0n
     ];
 }
 exports.encodeTxMarketEndMessage = encodeTxMarketEndMessage;

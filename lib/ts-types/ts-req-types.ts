@@ -100,3 +100,45 @@ export interface TsTxCancelOrderNonSignatureRequest extends ITxRequest {
 }
 export interface TsTxCancelOrderRequest extends TsTxCancelOrderNonSignatureRequest, TsTxSignaturePayload { }
 
+
+/** PlaceOrder */
+export interface TsTxAuctionLendNonSignatureRequest extends ITxRequest {
+  L2AddrFrom: string;
+  L2AddrTo: TsSystemAccountAddress.AUCTION_ADDR;
+  L2TokenAddrLending: TsTokenAddress; 
+  lendingAmt: string;
+  nonce: string;
+  maturityDate: string;
+  expiredTime: string;
+  interest: string;
+  txId?: string;
+  txAmount: string;
+}
+export interface TsTxAuctionLendRequest extends TsTxAuctionLendNonSignatureRequest, TsTxSignaturePayload { }
+
+export interface TsTxAuctionBorrowNonSignatureRequest extends ITxRequest {
+  L2AddrFrom: string;
+  L2AddrTo: TsSystemAccountAddress.AUCTION_ADDR;
+  L2TokenAddrCollateral: TsTokenAddress;
+  collateralAmt: string;
+  nonce: string;
+  maturityDate: string;
+  expiredTime: string;
+  interest: string;
+  L2TokenAddrBorrowing: TsTokenAddress;
+  borrowingAmt: string;
+  txId?: string;
+  txAmount: string;
+}
+export interface TsTxAuctionBorrowRequest extends TsTxAuctionBorrowNonSignatureRequest, TsTxSignaturePayload { }
+
+export interface TsTxAuctionCancelNonSignatureRequest extends ITxRequest {
+  L2AddrReceiver: string;
+  L2TokenAddrRefunded: TsTokenAddress;
+  amount: string;
+  txAmount: string;
+  nonce: string;
+  orderLeafId: string;
+}
+export interface TsTxAuctionCancelRequest extends TsTxAuctionCancelNonSignatureRequest, TsTxSignaturePayload { }
+
